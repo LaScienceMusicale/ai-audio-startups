@@ -1,0 +1,13 @@
+# Artefacts Python
+__pycache__/
+*.pyc
+
+# Sorties du pipeline (données lourdes, non versionnées)
+*.npz
+detections/
+refs/
+archives_roche/
+*.wav
+*.flac
+*.aiff
+*.aif
