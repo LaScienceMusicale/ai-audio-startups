@@ -4,6 +4,17 @@ Lecture éditoriale et production du dossier en l'état. Objectif : consolider u
 dossier déjà solide avant dépôt. Les points sont classés du plus structurant au
 plus fin.
 
+> **Mise à jour (version enrichie du dossier).** La révision de la partie
+> éditoriale a résolu plusieurs points ci-dessous : l'épisode Nouvelle-Guinée
+> est désormais justifié par le « changement de paradigme » (écouter les
+> écosystèmes) → §2.a levé ; le résumé court liste bien les cinq terrains, Corse
+> et Nouvelle-Guinée comprises → §2.b levé ; un dispositif d'énonciation clair
+> remplace le pari « sans voix off » (la voix archivée de Roché, remise sur CD
+> par Bernard Fort et écoutée au baladeur) → §3 (voix off) levé ; la prémisse
+> « Roché disparu il y a un an » n'est plus load-bearing (entretiens « à la fin
+> de sa vie », « personne n'a pris la relève ») → §3 apaisé. Restent surtout
+> les longueurs (voir §4) et les pièces production/administratif.
+
 ---
 
 ## 1. Ce qui fonctionne très bien
@@ -95,11 +106,14 @@ Longueurs (contrainte : ≤ 1200 caractères) — mesurées sur la version de ce
 
 | Élément | Caractères | Statut |
 |---|---:|---|
-| Résumé court | 1188 | OK (marge faible) |
-| Ép. 2 — Corse | 995 | OK |
-| Ép. 3 — Białowieża | 1248 | **à raccourcir (~50 c.)** |
-| Ép. 4 — Nouvelle-Guinée | 1348 | **à raccourcir (~150 c.)** |
-| Ép. 5 — Berlin/Paris | 1126 | OK |
+| Résumé court | 1163 | OK |
+| Ép. 2 — Corse | 1270 | **à raccourcir (~70 c.)** |
+| Ép. 3 — Białowieża | 1479 | **à raccourcir (~280 c.)** |
+| Ép. 4 — Nouvelle-Guinée | 1772 | **à raccourcir (~570 c.)** |
+| Ép. 5 — Berlin/Paris | 1180 | OK |
+
+*(Comptages sur la version enrichie. L'épisode 4 est le plus long : la séquence
+« liens invisibles » + l'échange avec Jérôme Sueur peuvent être condensés.)*
 
 Pièces encore manquantes (bloquantes pour le dépôt) :
 
