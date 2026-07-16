@@ -105,6 +105,13 @@ l'instance AudioSuite — *à condition que les trois soient la même image char
 une seule fois*. **C'est exactement l'hypothèse que valide le doc 03 §3.** Si
 elle tient, c'est le chemin le plus simple et le plus rapide.
 
+> **Contrainte produit : tout se passe dans MC.** Aucun « load reference »,
+> aucun audio chargé hors de l'app. La référence boom est **capturée pendant
+> que MC la lit** (insert pendant la lecture pilotée, ou AudioSuite Preview en
+> fallback). Le fichier mmap du chemin (b) est de la plomberie interne écrite
+> et relue par les plugins eux-mêmes — jamais visible de l'utilisateur, jamais
+> un import, jamais un WAV.
+
 #### (b) Fichier mappé mémoire — le chemin robuste (préféré)
 
 Un `mmap` (POSIX) / `CreateFileMapping`+`MapViewOfFile` (Win) sur un fichier de

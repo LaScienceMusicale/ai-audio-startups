@@ -17,6 +17,11 @@ AudioSuite qui n'était pas encore spécifié.
 | AudioSuite lav | Code existant | La lecture du registre + repli fingerprint (doc 02, doc 05) |
 | Extension MC | À écrire | Orchestration (doc 01) — hors périmètre v0 |
 
+**Contrainte produit : tout dans Media Composer.** Pas de « load reference »,
+pas d'audio chargé hors de l'app, pas d'export/réimport. La référence boom est
+capturée pendant que MC la lit (insert, ou AudioSuite Preview en fallback) ; le
+transit entre instances est de la plomberie interne invisible (doc 02).
+
 **v0 = maquette.** L'objectif de la maquette n'est pas d'aligner quoi que ce
 soit : c'est de **valider les 4 hypothèses bloquantes** (doc 03) avant de
 construire. Tant que le test transport (doc 04) n'est pas vert, rien d'autre ne
