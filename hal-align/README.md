@@ -38,6 +38,7 @@ compte.
 | 05 | [dsp.md](docs/05-dsp.md) | GCC-PHAT, délai fractionnaire, lissage, confiance |
 | 06 | [checklist.md](docs/06-checklist.md) | Les pièges par catégorie |
 | 07 | [roadmap-plateforme.md](docs/07-roadmap-plateforme.md) | Pourquoi l'infra est une plateforme |
+| 08 | [compendium-aax-mc.md](docs/08-compendium-aax-mc.md) | Le grand vrac : 122 points AAX × MC (établi / à vérifier / améliorations) |
 
 ## Par où commencer
 
