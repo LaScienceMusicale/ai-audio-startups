@@ -25,6 +25,7 @@ dev = ["pytest>=8"]
 
 [project.scripts]
 sa3-endless = "sa3_endless.cli:main"
+sa3-endless-demo = "sa3_endless.demo:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

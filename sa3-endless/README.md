@@ -114,6 +114,19 @@ OSC (`--osc-port 9000`), depuis Max, Pd, SuperCollider ou TouchOSC :
 Un re-seed n'est jamais brutal : le nouveau sample est crossfadé sur la fin de
 ce qui joue, puis le modèle continue à partir de lui.
 
+## Écouter une continuation
+
+```bash
+sa3-endless-demo --seed cloche.wav --seed-seconds 10 --seconds 50 --out demo
+open demo/index.html
+```
+
+Produit `seed.wav` (le départ), `continuation.wav` (la suite seule), `full.wav`
+(enchaîné) et une page avec les trois lecteurs, en passant par le vrai chemin de
+streaming (chunks, overlap, crossfade). Ajouter `--prompt "..."` pour orienter,
+`--gen-seed 42` pour un rendu reproductible, `--engine mock` pour vérifier la
+chaîne sans modèle.
+
 ## Utiliser depuis Python
 
 ```python

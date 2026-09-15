@@ -108,8 +108,9 @@ class StableAudioEngine:
         sr = self.sample_rate
         ctx_seconds = context.shape[1] / sr
         total = ctx_seconds + new_seconds
+        # upstream asserts `prompt is not None`; the empty string is its "no prompt" mode
         audio = model.generate(
-            prompt=prompt or None,
+            prompt=prompt or "",
             duration=total,
             steps=self.steps,
             cfg_scale=self.cfg_scale,
