@@ -11,17 +11,26 @@ installations. Streams to the sound card, records to WAV, controllable over OSC.
 ## Comment ça marche
 
 ```
-sample (3 s) ──► contexte (10 s max) ──► Stable Audio 3 inpainting ──► +8 s ──► lecture
-                     ▲                    (masque après la fin)              │
-                     └──────────────── les dernières secondes jouées ◄───────┘
+sample (3 s) ─► contexte ─► Stable Audio 3 (inpainting après la fin) ─► chunk ─► ring buffer ─► carte son
+                  ▲                                                                  │           (callback)
+                  └──────────────────── dernières secondes jouées ◄──────────────────┘
 ```
 
+Le modèle génère par morceaux, mais la sortie est un flux continu :
+
 1. Le sample amorce le flux.
-2. Le moteur reçoit les dernières `--context` secondes jouées et demande au modèle
-   de générer la suite (`inpaint_mask_start` = fin du contexte).
-3. Les `--overlap` dernières secondes sont régénérées et crossfadées à puissance
-   constante pour cacher la couture.
-4. Les chunks sont générés `--lookahead` chunks en avance et joués bout à bout.
+2. Le générateur (thread) demande au modèle la suite des dernières `--context`
+   secondes jouées (`inpaint_mask_start` = fin du contexte). Les `--overlap`
+   dernières secondes sont régénérées et crossfadées à puissance constante :
+   aucune couture audible.
+3. Les chunks alimentent un ring buffer de `--buffer` secondes. La carte son tire
+   dedans par petits blocs (`--blocksize`) depuis son callback temps réel : la
+   lecture ne dépend jamais du modèle.
+4. La longueur des chunks s'adapte à la vitesse mesurée (`rtf`) : plus le modèle
+   est lent, plus les chunks sont longs, ce qui amortit le coût du contexte.
+5. Si malgré tout le buffer passe sous `--low-water`, le flux ne s'arrête pas :
+   il boucle le contexte récent (crossfadé, et se terminant exactement là où le
+   modèle reprendra) jusqu'à ce que la génération rattrape.
 
 Le contexte audio pèse plus que le prompt texte : le modèle prolonge le timbre
 et la dynamique du sample. Un prompt reste possible pour orienter la dérive.
@@ -65,14 +74,20 @@ Options utiles :
 | `--chunk` | 8 s | audio nouveau par génération |
 | `--context` | 10 s | passé donné au modèle (plus court = plus rapide, moins cohérent) |
 | `--overlap` | 0.5 s | zone régénérée et crossfadée |
-| `--lookahead` | 2 | chunks générés en avance |
+| `--buffer` | 30 s | audio gardé en avance dans le ring buffer |
+| `--low-water` | 3 s | seuil sous lequel le contexte est bouclé en attendant le modèle |
+| `--preroll` | 4 s | audio bufferisé avant de démarrer la lecture |
+| `--max-chunk` | 30 s | plafond de la longueur de chunk adaptative |
+| `--blocksize` | 1024 | taille des blocs du callback audio |
 | `--steps` | 8 | pas de diffusion |
 | `--switch-every` | 0 | re-seed automatique depuis un autre sample (secondes) |
 | `--osc-port` | 0 | port UDP pour le contrôle OSC |
 
-Le log affiche pour chaque chunk le facteur temps réel (`rtf`). S'il dépasse 1,
-la génération est plus lente que la lecture : augmenter `--chunk`, baisser
-`--context` ou `--steps`, ou passer sur GPU.
+Le log affiche pour chaque chunk le facteur temps réel (`rtf`). S'il reste
+au-dessus de 1 même avec des chunks longs, le flux tient grâce aux boucles de
+maintien mais devient répétitif : baisser `--context` ou `--steps`, ou passer
+sur GPU. Avec `-v`, un état du buffer (secondes d'avance, holds, underruns)
+s'affiche toutes les 10 s.
 
 ### Contrôle en direct
 
@@ -102,18 +117,24 @@ ce qui joue, puis le modèle continue à partir de lui.
 ## Utiliser depuis Python
 
 ```python
-from sa3_endless import StableAudioEngine, Streamer, StreamConfig
+from sa3_endless import ContinuousStream, StableAudioEngine
 from sa3_endless.samples import load_sample
 
 engine = StableAudioEngine("small-sfx")
 engine.load()
 seed = load_sample("bell.wav", engine.sample_rate, engine.channels)
-stream = Streamer(engine, seed, StreamConfig(chunk_seconds=8)).start()
+stream = ContinuousStream(engine, seed).start()
+stream.wait_preroll()
 
 while True:
-    chunk = stream.next_chunk()   # float32 [channels, samples]
-    ...                           # envoyer où vous voulez
+    block = stream.read(1024, block=True)   # float32 [channels, 1024], toujours sans trou
+    ...                                     # envoyer où vous voulez
+
+stream.reseed(load_sample("wind.wav", engine.sample_rate, engine.channels))
+stream.set_prompt("rain on a tin roof")
 ```
+
+`Streamer` (niveau chunk) reste disponible si vous voulez gérer le buffer vous-même.
 
 `MockEngine` remplace le modèle pour les tests et le développement du patch.
 

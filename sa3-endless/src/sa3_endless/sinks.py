@@ -56,3 +56,41 @@ class MultiSink:
     def close(self) -> None:
         for s in self.sinks:
             s.close()
+
+
+class CallbackOutput:
+    """Real-time output driven by the sound card: PortAudio pulls blocks from a
+    `ContinuousStream` in its callback, so playback never waits on the generator."""
+
+    def __init__(self, stream, device: Optional[str] = None, blocksize: int = 1024, tee=None):
+        try:
+            import sounddevice as sd
+        except ImportError as exc:  # pragma: no cover
+            raise SystemExit("sounddevice is not installed. Run: pip install -e '.[audio]'") from exc
+        self.source = stream
+        self.tee = tee
+        self.frames = 0
+        self.underruns = 0
+
+        def callback(outdata, frames, _time, status):
+            if status and status.output_underflow:
+                self.underruns += 1
+            block = self.source.read(frames)  # non-blocking, zero-filled if short
+            outdata[:] = block.T
+            self.frames += frames
+            if self.tee is not None:
+                self.tee.write(block)
+
+        self.stream = sd.OutputStream(
+            samplerate=stream.sr, channels=stream.channels, dtype="float32",
+            device=device, blocksize=blocksize, callback=callback,
+        )
+
+    def start(self) -> None:
+        self.stream.start()
+
+    def close(self) -> None:
+        self.stream.stop()
+        self.stream.close()
+        if self.tee is not None:
+            self.tee.close()
