@@ -151,6 +151,11 @@ stream.set_prompt("rain on a tin roof")
 
 `MockEngine` remplace le modèle pour les tests et le développement du patch.
 
+## Architecture
+
+Voir [ARCHITECTURE.md](ARCHITECTURE.md) : le chemin du son, les cinq modules et les
+quatre décisions qui rendent la sortie continue malgré un modèle qui génère par blocs.
+
 ## Développement
 
 ```bash
